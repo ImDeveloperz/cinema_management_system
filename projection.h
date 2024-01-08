@@ -25,16 +25,17 @@ static unsigned int CP = 0;
 
 // ----------------CreeProjection-------------------------------
 
- void creeProjection(Projection *p,unsigned int f,unsigned int  S);
+void creeProjection(Projection *p, unsigned int f, unsigned int S);
 
 // ----------------AjouterReservationPourProjection-------------------------------
 
- void ajouterReservationPourProjection(Projection *projection, Reservation reservation);
+void ajouterReservationPourProjection(Projection *projection, Reservation reservation);
 
 // ajouter Projection Dans tous Les Projection
 
 void ajoutDansTousLesProjections(Projection projec);
 
+void setStatuePayementInProjection(Projection *p,unsigned int nbP,unsigned int idReservation);
 // ----------------Recherche-------------------------------
 
 // Projection* rechercheProjectionParNom(Projection *projections,unsigned int numProjections, char *nomSalle);
@@ -42,9 +43,9 @@ Projection *rechercheProjectionParId(Projection *projections, unsigned int numPr
 
 // ---------------------------suppresion d'une projection---------------------------
 
-void supprimerProjectionsDansUneSalle(Projection *projection,int *nb,unsigned int salleId);
+void supprimerProjectionsDansUneSalle(Projection *projection, int *nb, unsigned int salleId);
 void supprimerProjection(Projection *projections, unsigned int *nb_projections, unsigned int projectionId);
-
+void supprimerReservationFromProjection(Projection *p,int *nb_projections,unsigned int reservationId);
 // ----------------AffichageProjection-------------------------------
 
 void afficherProjection(Projection p);
@@ -52,12 +53,13 @@ void afficherProjectionWithDetails(Projection p);
 
 // ---------------------afficher Tout les projection ------------------------
 
-void afficherToutLesProjections(Projection *p,int nb);
+void afficherToutLesProjections(Projection *p, int nb);
 void afficherToutLesProjectionsWithDetails(Projection *p, int nb);
 
 // -------------------------File--------------------------------
 
- void remplirProjectionFromFile();
+void remplirProjectionFromFile();
 
-#endif //SALLECENIMA_H
+void enregistrerProjectionsToFile(const Projection *projections, int nb_projections);
 
+#endif // SALLECENIMA_H

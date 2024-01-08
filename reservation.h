@@ -29,12 +29,13 @@ Reservation* rechercherReservationParID(Reservation * tableauReservations,unsign
 // ----------------AffichageReservation-------------------------------
 
 void afficherReservation(Reservation r);
-
+void setStatuePaiment(Reservation *reservations,unsigned int nb_reservations,unsigned int idReservation);
 void ajoutDansToutesLesReservations(Reservation reserv);
 // -------------------------suppression-----------------------------------------
 void supprimerProjectionsDansReservation(Reservation *reservations, unsigned int *nb_reservations, unsigned int projectionId);
+void supprimerReserationFromReservations(Reservation *reservations, unsigned int *nb_reservations,unsigned int reservationId);
 // ----------------File--------------------------------------
-
+void enregistrerReservationsToFile(const Reservation *reservations, int nb_reservations);
 void remplirReservationFromFile();
 
 #endif // RESERVATION_H

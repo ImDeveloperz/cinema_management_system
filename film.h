@@ -57,6 +57,6 @@ void afficherTousLesFilms(Film *tabFilms, int nb);
 // --------------------------File-------------------------------------
 
 void remplirFilmFromFile();
-
+void enregistrerFilmsToFile(const Film *films, int nb_films);
 
 #endif // FILM_H

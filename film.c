@@ -149,7 +149,7 @@ void afficherFilm(Film f)
     afficheDate(f.dateSortie);
     printf("genre : %s\n", f.genre);
     printf("discription du film : %s\n", f.discriptionFilm);
-    printf("Studio : %s\n", f.studio);
+    // printf("Studio : %s\n", f.studio);
     printf("Nombre de projection : %d \n\n", f.nombreProjection);
 }
 
@@ -250,5 +250,28 @@ void remplirFilmFromFile()
             return;
         }
     }
+    fclose(file);
+}
+
+
+void enregistrerFilmsToFile(const Film *films, int nb_films)
+{
+    FILE *file = fopen("film.txt", "w");
+
+    if (file == NULL)
+    {
+        printf("Impossible d'ouvrir le fichier film.txt pour l'enregistrement.\n");
+        return;
+    }
+    fprintf(file,"%u\n",CF);
+    for (int i = 0; i < nb_films; ++i)
+    {
+        fprintf(file, "%u # %u # %s # %d %d %d # %s # %s # %s # %s # %d\n",
+                films[i].filmId, films[i].dureeFilm, films[i].realisateur,
+                films[i].dateSortie.j, films[i].dateSortie.m, films[i].dateSortie.a,
+                films[i].titreFilm, films[i].genre, films[i].discriptionFilm,
+                films[i].studio, films[i].nombreProjection);
+    }
+
     fclose(file);
 }

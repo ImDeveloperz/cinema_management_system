@@ -24,6 +24,9 @@ extern int nb_salles;
 // ----------------InitialiserSalle-------------------------------
 
 void saisieSalleCenima(SalleCenima *S);
+// -----------------------getteur----------------------------
+
+int getCapaciterSalleFromSalleParId(int idSalle);
 
 // ---------------------------Ajout----------------------------
 // --------------------AjouterProjectionPourSalle-------------------------------
@@ -34,7 +37,7 @@ void ajouterProjectionPourSalleParId(Projection p,unsigned int idSalle);
 
 // --------------------AjouterProjectionPourSalle-------------------------------
 
-void ajoutSalleDansLaListeDeSalles(SalleCenima *tabSalles,int *nombreSalle,SalleCenima sc);
+void ajoutSalleDansLaListeDeSalles(SalleCenima **tabSalles, int *nombreSalle, SalleCenima sc) ;
 
 // ---------------------Recherche-------------------------------
 
@@ -61,5 +64,6 @@ void AfficherSalleCinemaWithDetails(SalleCenima s);
 //--------------------------- File-------------------------------------
 
 void remplirSalleCenimaFromFile();
+void enregistrerSallesCinemaToFile(const SalleCenima *salles, int nb_salles);
 
 #endif //SALLECENIMA_H

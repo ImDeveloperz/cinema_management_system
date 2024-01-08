@@ -12,5 +12,6 @@ void afficheDate(Date d) {
 void saisieDate(Date *d){
     printf("\n saisir la date sous form dd/mm/aa : ");
     scanf("%d/%d/%d",&d->j, &d->m , &d->a );
-    // on peut verifier si la date juste ou non ...
+    getchar();
+     // on peut verifier si la date juste ou non ...
 }

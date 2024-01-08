@@ -1,6 +1,7 @@
 #include "reservation.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 // ----------------CreeReservation-------------------------------
 Reservation *reservations = NULL;
 int nb_reservation = 0;
@@ -18,13 +19,12 @@ void creeReservation(Reservation *r, unsigned int c, unsigned int p)
     getchar();
 }
 
-
 void ajoutDansToutesLesReservations(Reservation reserv)
 {
     if (reservations == NULL)
     {
         reservations = malloc(sizeof(Reservation));
-        reservations[nb_reservation]=reserv;
+        reservations[nb_reservation] = reserv;
         nb_reservation = 1;
     }
     else
@@ -62,6 +62,17 @@ void afficherReservation(Reservation r)
     printf("Id de Projection %d\n", r.projectionId);
 }
 
+
+void setStatuePaiment(Reservation *reservations,unsigned int nb_reservations,unsigned int idReservation){
+    int i;
+    printf("nombre reservation totale %d",nb_reservation);
+    for(i = 0; i < nb_reservations; i++ ){
+        if(reservations[i].reservationId == idReservation){
+            strcpy(reservations[i].statuePaiment,"paye");
+            break;
+        }
+    }
+}
 // ---------------------------------suppresion des reservation--------------------------------------
 
 void supprimerProjectionsDansReservation(Reservation *reservations, unsigned int *nb_reservations, unsigned int projectionId)
@@ -76,6 +87,24 @@ void supprimerProjectionsDansReservation(Reservation *reservations, unsigned int
         }
     }
 }
+
+void supprimerReserationFromReservations(Reservation *reservations, unsigned int *nb_reservations, unsigned int reservationId)
+{
+    int i, j;
+    for (i = 0; i < *nb_reservations; i++)
+    {
+        if (reservations[i].reservationId == reservationId)
+        {
+            for (j = i; j < *nb_reservations - 1; j++)
+            {
+                reservations[j] = reservations[j + 1];
+            }
+            *nb_reservations--;
+            printf("\n|=========================la reservation est annuler\n");
+            break;
+        }
+    }
+}
 // ----------------------------------File----------------------------------
 
 void remplirReservationFromFile()
@@ -87,7 +116,7 @@ void remplirReservationFromFile()
         printf("Impossible d'ouvrir le fichier reservation.txt.\n");
         return;
     }
-    fscanf(file,"%d\n",&CR);
+    fscanf(file, "%d\n", &CR);
     while (!feof(file))
     {
         Reservation *reservation = malloc(sizeof(Reservation));
@@ -105,7 +134,8 @@ void remplirReservationFromFile()
             reservations = (Reservation *)realloc(reservations, (++nb_reservation) * sizeof(Reservation));
             reservations[nb_reservation - 1] = *reservation;
         }
-        else{
+        else
+        {
             printf("Erreur lors de la lecture des donnees du client.\n");
             free(reservation->statuePaiment);
             free(reservation);
@@ -113,5 +143,25 @@ void remplirReservationFromFile()
         }
     }
 
+    fclose(file);
+}
+
+void enregistrerReservationsToFile(const Reservation *reservations, int nb_reservations)
+{
+    FILE *file = fopen("reservation.txt", "w");
+
+    if (file == NULL)
+    {
+        printf("Impossible d'ouvrir le fichier reservation.txt pour l'enregistrement.\n");
+        return;
+    }
+    fprintf(file, "%u\n", CR);
+    for (int i = 0; i < nb_reservations; ++i)
+    {
+        fprintf(file, "%u # %u # %d # %d # %s # %u\n",
+                reservations[i].reservationId, reservations[i].clientId,
+                reservations[i].nombreBilletReserver, reservations[i].montantTotal,
+                reservations[i].statuePaiment, reservations[i].projectionId);
+    }
     fclose(file);
 }

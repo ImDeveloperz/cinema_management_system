@@ -1,8 +1,10 @@
 #include "projection.h"
 #include "heure.h"
 #include "date.h"
+#include "salleCenima.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 Projection *projections = NULL;
 int nb_projections = 0;
@@ -21,6 +23,8 @@ void creeProjection(Projection *p, unsigned int f, unsigned int S)
     printf("Saisie le prix dun billet de projection : ");
     scanf("%d", &p->prixBillet);
     getchar();
+    // recherhe a la salle par idSalle
+    p->nbPlacesDisponible = getCapaciterSalleFromSalleParId(S);
     //    p->nbPlacesDisponible = S.capaciteSalle;
     p->filmId = f;
     p->salleId = S;
@@ -53,6 +57,22 @@ void ajoutDansTousLesProjections(Projection projec)
         nb_projections++;
     }
 }
+
+void setStatuePayementInProjection(Projection *p, unsigned int nbP, unsigned int idReservation)
+{
+    int i, j;
+    for (i = 0; i < nbP; i++)
+    {
+        for (j = 0; j < p[i].nbReservation; j++)
+        {
+            if (idReservation == p[i].reservations[j].reservationId)
+            {
+                strcpy(p[i].reservations[j].statuePaiment, "paye");
+                break;
+            }
+        }
+    }
+}
 // ----------------Recherche-------------------------------
 
 Projection *rechercheProjectionParId(Projection *projections, unsigned int numProjections, unsigned int projectionId)
@@ -78,8 +98,6 @@ Projection *rechercheProjectionParId(Projection *projections, unsigned int numPr
 //     return NULL; // Projection non existe
 // }
 
-
-
 // ----------------AffichageProjection-------------------------------
 
 void afficherProjection(Projection p)
@@ -94,7 +112,6 @@ void afficherProjection(Projection p)
     printf("l'id du Film : %u \n", p.filmId);
     printf("le Prix du Billet de Projection : %u \n ", p.prixBillet);
     printf("Nombre de place disponible : %u \n ", p.nbPlacesDisponible);
-    printf("Nombre de places reservees: %u\n", p.nbReservation);
     printf("l'id du salle: %d \n", p.salleId);
     printf("Film id : %u", p.filmId);
     printf("\n\n");
@@ -128,26 +145,48 @@ void afficherProjectionWithDetails(Projection p)
     }
     else
     {
-        printf("\nAucune projection dans cette salle.\n\n");
+        printf("\n|=============Aucune reservation trouvé \n\n");
     }
 }
 
 // -------------------------------suppression d'une projection----------------------------------
 
-void supprimerProjectionsDansUneSalle(Projection *projection,int *nb,unsigned int salleId){
-    int i,j;
-    for(i=0 ; i<*nb ; i++){
-        if(projection[i].salleId == salleId){
+void supprimerProjectionsDansUneSalle(Projection *projection, int *nb, unsigned int salleId)
+{
+    int i, j;
+    for (i = 0; i < *nb; i++)
+    {
+        if (projection[i].salleId == salleId)
+        {
             // supprimer projection
-            for(j = i; j < *nb - 1 ; j++){
-                projection[j]=projection[j+1];
+            for (j = i; j < *nb - 1; j++)
+            {
+                projection[j] = projection[j + 1];
             }
             (*nb)--;
             i--;
         }
     }
 }
-
+void supprimerReservationFromProjection(Projection *p,int *nb_projections, unsigned int reservationId)
+{
+    int i, j, k;
+    for (i = 0; i < *nb_projections; i++)
+    {
+        for (j = 0; j < p[i].nbReservation; j++)
+        {
+            if (p[i].reservations[j].reservationId == reservationId)
+            {
+                for (k = j; k < p[i].nbReservation - 1; k++)
+                {
+                    p[i].reservations[k] = p[i].reservations[k + 1];
+                }
+                p[i].nbReservation--;
+                break;
+            }
+        }
+    }
+}
 void supprimerProjection(Projection *projections, unsigned int *nb_projections, unsigned int projectionId)
 {
     int i;
@@ -173,8 +212,6 @@ void supprimerProjection(Projection *projections, unsigned int *nb_projections, 
         }
     }
 }
-
-
 
 // ---------------------afficher Tout les projection ------------------------
 void afficherToutLesProjections(Projection *p, int nb)
@@ -239,6 +276,30 @@ void remplirProjectionFromFile()
             free(projection);
             return;
         }
+    }
+
+    fclose(file);
+}
+
+void enregistrerProjectionsToFile(const Projection *projections, int nb_projections)
+{
+    FILE *file = fopen("projection.txt", "w");
+
+    if (file == NULL)
+    {
+        printf("Impossible d'ouvrir le fichier projection.txt pour l'enregistrement.\n");
+        return;
+    }
+    fprintf(file, "%u\n", CP);
+    for (int i = 0; i < nb_projections; ++i)
+    {
+        fprintf(file, "%u # %d %d %d # %d %d %d # %d %d %d # %u # %u # %u # %u # %u\n",
+                projections[i].projectionId,
+                projections[i].dateProjection.j, projections[i].dateProjection.m, projections[i].dateProjection.a,
+                projections[i].heureDebut.h, projections[i].heureDebut.m, projections[i].heureDebut.s,
+                projections[i].heureFin.h, projections[i].heureFin.m, projections[i].heureFin.s,
+                projections[i].prixBillet, projections[i].nbPlacesDisponible,
+                projections[i].filmId, projections[i].salleId, projections[i].nbReservation);
     }
 
     fclose(file);
