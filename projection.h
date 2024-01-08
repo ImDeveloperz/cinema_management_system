@@ -25,7 +25,7 @@ static unsigned int CP = 0;
 
 // ----------------CreeProjection-------------------------------
 
-void creeProjection(Projection *p, unsigned int f, unsigned int S);
+void creeProjection(Projection *p, unsigned int f, unsigned int S,Date d);
 
 // ----------------AjouterReservationPourProjection-------------------------------
 
@@ -35,7 +35,7 @@ void ajouterReservationPourProjection(Projection *projection, Reservation reserv
 
 void ajoutDansTousLesProjections(Projection projec);
 
-void setStatuePayementInProjection(Projection *p,unsigned int nbP,unsigned int idReservation);
+void setStatuePayementInProjection(Projection *p, unsigned int nbP, unsigned int idReservation);
 // ----------------Recherche-------------------------------
 
 // Projection* rechercheProjectionParNom(Projection *projections,unsigned int numProjections, char *nomSalle);
@@ -45,7 +45,8 @@ Projection *rechercheProjectionParId(Projection *projections, unsigned int numPr
 
 void supprimerProjectionsDansUneSalle(Projection *projection, int *nb, unsigned int salleId);
 void supprimerProjection(Projection *projections, unsigned int *nb_projections, unsigned int projectionId);
-void supprimerReservationFromProjection(Projection *p,int *nb_projections,unsigned int reservationId);
+void supprimerReservationFromProjection(Projection *p, int *nb_projections, unsigned int reservationId);
+void supprimerReservationFromProjectionNonpayer(Projection *p, int nb_projections);
 // ----------------AffichageProjection-------------------------------
 
 void afficherProjection(Projection p);

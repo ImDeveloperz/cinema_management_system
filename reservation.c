@@ -62,13 +62,14 @@ void afficherReservation(Reservation r)
     printf("Id de Projection %d\n", r.projectionId);
 }
 
-
-void setStatuePaiment(Reservation *reservations,unsigned int nb_reservations,unsigned int idReservation){
+void setStatuePaiment(Reservation *reservations, unsigned int nb_reservations, unsigned int idReservation)
+{
     int i;
-    printf("nombre reservation totale %d",nb_reservation);
-    for(i = 0; i < nb_reservations; i++ ){
-        if(reservations[i].reservationId == idReservation){
-            strcpy(reservations[i].statuePaiment,"paye");
+    for (i = 0; i < nb_reservations; i++)
+    {
+        if (reservations[i].reservationId == idReservation)
+        {
+            reservations[i].statuePaiment = "paye";
             break;
         }
     }
@@ -102,6 +103,23 @@ void supprimerReserationFromReservations(Reservation *reservations, unsigned int
             *nb_reservations--;
             printf("\n|=========================la reservation est annuler\n");
             break;
+        }
+    }
+}
+
+void supprimerReserationFromReservationsNonpayer(Reservation *reservations, unsigned int *nb_reservations){
+    int i, j;
+    for (i = 0; i < *nb_reservations; i++)
+    {
+        if (strcmp(reservations[i].statuePaiment,"nonPayer") == 0)
+        {
+            printf("\n|=========================la reservation %d est annuler\n",reservations[i].reservationId);
+            for (j = i; j < *nb_reservations - 1; j++)
+            {
+                reservations[j] = reservations[j + 1];
+            }
+            *nb_reservations = *nb_reservations -1;
+            i--;
         }
     }
 }
@@ -157,11 +175,11 @@ void enregistrerReservationsToFile(const Reservation *reservations, int nb_reser
     }
     fprintf(file, "%u\n", CR);
     for (int i = 0; i < nb_reservations; ++i)
-    {
-        fprintf(file, "%u # %u # %d # %d # %s # %u\n",
-                reservations[i].reservationId, reservations[i].clientId,
-                reservations[i].nombreBilletReserver, reservations[i].montantTotal,
-                reservations[i].statuePaiment, reservations[i].projectionId);
+    {  
+            fprintf(file, "%u # %u # %d # %d # %s # %u\n",
+                    reservations[i].reservationId, reservations[i].clientId,
+                    reservations[i].nombreBilletReserver, reservations[i].montantTotal,
+                    reservations[i].statuePaiment, reservations[i].projectionId);
     }
     fclose(file);
 }

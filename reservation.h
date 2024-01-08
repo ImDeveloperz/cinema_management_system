@@ -9,7 +9,7 @@ struct reservation
   char *statuePaiment;
   unsigned int projectionId;
 };
-typedef struct reservation Reservation ; 
+typedef struct reservation Reservation;
 
 static unsigned int CR = 0;
 
@@ -20,20 +20,22 @@ extern Reservation *reservations;
 extern int nb_reservation;
 
 // ----------------CreeReservation-------------------------------
-void creeReservation(Reservation *r,unsigned int c,unsigned int p);
+void creeReservation(Reservation *r, unsigned int c, unsigned int p);
 
 // ----------------Recherche-------------------------------
 
-Reservation* rechercherReservationParID(Reservation * tableauReservations,unsigned int taille,unsigned int idRecherche);
+Reservation *rechercherReservationParID(Reservation *tableauReservations, unsigned int taille, unsigned int idRecherche);
 
 // ----------------AffichageReservation-------------------------------
 
 void afficherReservation(Reservation r);
-void setStatuePaiment(Reservation *reservations,unsigned int nb_reservations,unsigned int idReservation);
+void setStatuePaiment(Reservation *reservations, unsigned int nb_reservations, unsigned int idReservation);
+
 void ajoutDansToutesLesReservations(Reservation reserv);
 // -------------------------suppression-----------------------------------------
 void supprimerProjectionsDansReservation(Reservation *reservations, unsigned int *nb_reservations, unsigned int projectionId);
-void supprimerReserationFromReservations(Reservation *reservations, unsigned int *nb_reservations,unsigned int reservationId);
+void supprimerReserationFromReservations(Reservation *reservations, unsigned int *nb_reservations, unsigned int reservationId);
+void supprimerReserationFromReservationsNonpayer(Reservation *reservations, unsigned int *nb_reservations);
 // ----------------File--------------------------------------
 void enregistrerReservationsToFile(const Reservation *reservations, int nb_reservations);
 void remplirReservationFromFile();

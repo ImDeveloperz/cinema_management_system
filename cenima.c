@@ -43,10 +43,6 @@ void remplirToutLesTableFromFile()
             client->reservation = realloc(client->reservation, (++client->nombreReservation) * sizeof(Reservation));
             client->reservation[client->nombreReservation - 1] = reservations[i];
         }
-        else
-        {
-            printf("Aucun client trouver pour la reservation avec l'ID %u.\n", clientId);
-        }
     }
 
     // Entre Reservation et Projection
@@ -65,10 +61,6 @@ void remplirToutLesTableFromFile()
             projection->reservations[projection->nbReservation] = reservations[i];
             projection->nbReservation++;
         }
-        else
-        {
-            printf("Aucune projection trouver pour la rÃ©servation avec l'ID de projection %u.\n", projectionId);
-        }
     }
 
     // Entre SalleCenima Et Projection
@@ -84,10 +76,6 @@ void remplirToutLesTableFromFile()
             salle->projection = realloc(salle->projection, (salle->nombreProjection + 1) * sizeof(Projection));
             salle->projection[salle->nombreProjection] = projections[i];
             salle->nombreProjection++;
-        }
-        else
-        {
-            printf("Aucune salle trouver pour la projection avec l'ID de salle %u.\n", salleId);
         }
         // AfficherToutesLesSalles(salles,nb_salles);
     }
@@ -107,10 +95,6 @@ void remplirToutLesTableFromFile()
             film->projection = realloc(film->projection, (film->nombreProjection + 1) * sizeof(Projection));
             film->projection[film->nombreProjection] = projections[i];
             film->nombreProjection++;
-        }
-        else
-        {
-            printf("Erreur : Aucun film trouver pour la projection avec l'ID de film %u.\n", filmId);
         }
     }
     printf("\nDonnees recuperer avec succee\n");
@@ -153,6 +137,7 @@ int menuAdmin()
     int test;
     int id;
     Film *f;
+    Date d;
     SalleCenima *sc = (SalleCenima *)malloc(sizeof(SalleCenima));
     Projection *p;
     while (1) // Infinite loopjusqua l-utilisatuer choisie 10 ou 11
@@ -206,6 +191,7 @@ int menuAdmin()
                     getchar();
                     if (choixFilm == 0)
                     {
+                        printf("\n\t Vous avez decide d'annuler l'ajout");
                         choixSalle = 0; // annulation
                     }
                     else
@@ -213,7 +199,8 @@ int menuAdmin()
                         if (estFilmExist(films, nb_films, choixFilm) == 1)
                         {
                             printf("\n|-------------------Ajout de Projection...\n\n");
-                            creeProjection(p, choixFilm, choixSalle);
+                            d = getDateFilm(films, nb_films, choixFilm);
+                            creeProjection(p, choixFilm, choixSalle, d);
                             ajoutDansTousLesProjections(*p);
                             ajouterProjectionPourFilmParId(*p, choixFilm);
                             ajouterProjectionPourSalleParId(*p, choixSalle);
@@ -289,7 +276,7 @@ int menuClient()
     int choixClient;
     int choixReservation;
     char *Cin;
-    int test,payment;
+    int test, payment;
     Client *c;
     Reservation *r;
     Projection *p;
@@ -341,17 +328,18 @@ int menuClient()
             creeReservation(r, clients[test].clientId, choixReservation);
             if (p->nbPlacesDisponible < r->nombreBilletReserver)
             {
-                printf("\n!!!------- Vous pouver pas Reserver %d places Car il reste juste %d place(s) pour la projection : \n",r->nombreBilletReserver,p->nbPlacesDisponible);
+                printf("\n!!!------- Vous pouver pas Reserver %d place(s) Car il reste juste %d place(s) pour la projection : \n", r->nombreBilletReserver, p->nbPlacesDisponible);
                 afficherProjection(*p);
             }
-            else{
+            else
+            {
                 printf("Reservation en cours ...\n\n");
                 // calcule Montant
                 p->nbPlacesDisponible = p->nbPlacesDisponible - r->nombreBilletReserver;
                 r->montantTotal = r->nombreBilletReserver * p->prixBillet;
                 ajoutDansToutesLesReservations(*r);
                 ajouterReservationDansClient(&clients[test], *r);
-                ajouterReservationPourProjection(p,*r);
+                ajouterReservationPourProjection(p, *r);
                 printf("Reservation effectuee.\n\n");
                 printf("le montant Totale est: %d\n", r->montantTotal);
                 printf("Remarque : Si vous payer pas votre reservation va etre annuler automatiquement\n");
@@ -366,37 +354,42 @@ int menuClient()
         case 4:
             afficherReservationClient(clients[test]);
             printf("\n\n|---------------Choisir l'id de la reservation a annuler : ");
-            scanf("%d",&choixReservation);
-            r = rechercherReservationParID(reservations,nb_reservation,choixReservation);
-            p = rechercheProjectionParId(projections,nb_projections,r->projectionId);
+            scanf("%d", &choixReservation);
+            r = rechercherReservationParID(reservations, nb_reservation, choixReservation);
+            p = rechercheProjectionParId(projections, nb_projections, r->projectionId);
             p->nbPlacesDisponible += r->nombreBilletReserver;
-            supprimerReserationFromReservations(reservations,&nb_reservation,choixReservation);
+            supprimerReserationFromReservations(reservations, &nb_reservation, choixReservation);
             // supprimmer reservation from client
-            supprimerReservationFromClient(clients[test],choixReservation);
-            supprimerReservationFromProjection(projections,&nb_projections,choixReservation);
+            supprimerReservationFromClient(&clients[test], choixReservation);
+            supprimerReservationFromProjection(projections, &nb_projections, choixReservation);
             printf("\n\n");
             break;
         case 5:
             // payment
             afficherReservationClientNonPayer(clients[test]);
             printf("\n\nChoisir La reservation a payer par id reservation: ");
-            scanf("%d",&choixReservation);
+            scanf("%d", &choixReservation);
             printf("Choisir la methode du paiment :\n\n");
             printf("1. Credit Card \n2. Paypal \n3. Visa \n\n");
             printf("Votre choix : ");
-            scanf("%d",&payment);
-            setStatuePaiment(reservations,nb_reservation,choixReservation);
-            printf("hhh\n");
-            setStatuePayementInClient(clients[test],choixReservation);
-            printf("hhh\n");
-            setStatuePayementInProjection(projections,nb_projections,choixReservation);
-            printf("hhh\n");
+            scanf("%d", &payment);
+            setStatuePaiment(reservations, nb_reservation, choixReservation);
+            setStatuePayementInClient(clients[test], choixReservation);
+            setStatuePayementInProjection(projections, nb_projections, choixReservation);
             break;
         case 6:
+            supprimerReserationFromReservationsNonpayer(reservations, &nb_reservation);
+            // supprimmer reservation from client
+            supprimerReservationFromClientNonpayer(&clients[test]);
+            supprimerReservationFromProjectionNonpayer(projections, nb_projections);
             menu();
             return 1;
         case 7:
             printf("\n|----------Vous avez quiter le Programe-------------|\n\n");
+            supprimerReserationFromReservationsNonpayer(reservations, &nb_reservation);
+            // supprimmer reservation from client
+            supprimerReservationFromClientNonpayer(&clients[test]);
+            supprimerReservationFromProjectionNonpayer(projections, nb_projections);
             remplirToutLesTableToFile();
             return 1;
         default:

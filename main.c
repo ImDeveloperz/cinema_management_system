@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include"cenima.h"
-
+#include"time.h"
 int main()
 {
     remplirToutLesTableFromFile();

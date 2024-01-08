@@ -11,15 +11,15 @@ int nb_projections = 0;
 
 // ----------------CreeProjection-------------------------------
 
-void creeProjection(Projection *p, unsigned int f, unsigned int S)
+void creeProjection(Projection *p, unsigned int f, unsigned int S, Date d)
 {
     p->projectionId = ++CP;
     printf("saisir la date du projection");
-    saisieDate(&p->dateProjection);
+    saisieDateProjection(&p->dateProjection, d);
     printf("saisir l'heure du debut de projection");
-    saisieHeure(&p->heureDebut);
+    saisieHeureDebut(&p->heureDebut);
     printf("saisir l'heure du fin de projection");
-    saisieHeure(&p->heureFin);
+    saisieHeureFin(&p->heureFin, p->heureDebut);
     printf("Saisie le prix dun billet de projection : ");
     scanf("%d", &p->prixBillet);
     getchar();
@@ -67,7 +67,7 @@ void setStatuePayementInProjection(Projection *p, unsigned int nbP, unsigned int
         {
             if (idReservation == p[i].reservations[j].reservationId)
             {
-                strcpy(p[i].reservations[j].statuePaiment, "paye");
+                p[i].reservations[j].statuePaiment = "paye";
                 break;
             }
         }
@@ -168,7 +168,7 @@ void supprimerProjectionsDansUneSalle(Projection *projection, int *nb, unsigned 
         }
     }
 }
-void supprimerReservationFromProjection(Projection *p,int *nb_projections, unsigned int reservationId)
+void supprimerReservationFromProjection(Projection *p, int *nb_projections, unsigned int reservationId)
 {
     int i, j, k;
     for (i = 0; i < *nb_projections; i++)
@@ -213,6 +213,25 @@ void supprimerProjection(Projection *projections, unsigned int *nb_projections, 
     }
 }
 
+void supprimerReservationFromProjectionNonpayer(Projection *p, int nb_projections)
+{
+    int i, j, k;
+    for (i = 0; i < nb_projections; i++)
+    {
+        for (j = 0; j < p[i].nbReservation; j++)
+        {
+            if (strcmp(p[i].reservations[j].statuePaiment, "nonPayer") == 0)
+            {
+                p[i].nbPlacesDisponible += p[i].reservations[j].nombreBilletReserver;
+                for (k = j; k < p[i].nbReservation - 1; k++)
+                {
+                    p[i].reservations[k] = p[i].reservations[k + 1];
+                }
+                p[i].nbReservation--;
+            }
+        }
+    }
+}
 // ---------------------afficher Tout les projection ------------------------
 void afficherToutLesProjections(Projection *p, int nb)
 {
@@ -264,11 +283,14 @@ void remplirProjectionFromFile()
         if (result == 15)
         {
             // Initialize reservations to NULL for each projection
-            projection->reservations = NULL;
-            projection->nbReservation = 0;
-            // Ajouter la projection dans la table projections
-            projections = (Projection *)realloc(projections, (++nb_projections) * sizeof(Projection));
-            projections[nb_projections - 1] = *projection;
+            if (validateDateProjectionFile(projection->dateProjection) == 1)
+            {
+                projection->reservations = NULL;
+                projection->nbReservation = 0;
+                // Ajouter la projection dans la table projections
+                projections = (Projection *)realloc(projections, (++nb_projections) * sizeof(Projection));
+                projections[nb_projections - 1] = *projection;
+            }
         }
         else
         {

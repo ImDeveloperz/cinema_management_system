@@ -36,7 +36,7 @@ void saisieFilm(Film *f)
     scanf("%s", f->genre);
     getchar();
     printf("Veuillez saisir la date de sortie du film : ");
-    saisieDate(&f->dateSortie);
+    saisieDateFilm(&f->dateSortie);
 
     f->projection = NULL;
     f->nombreProjection = 0;
@@ -111,6 +111,14 @@ int estFilmExist(Film *f, int nb, int id)
     return 0;
 }
 
+Date getDateFilm(Film *f, int nb, int id){
+    int i;
+    for (i = 0; i < nb; i++)
+    {
+        if (f[i].filmId == id)
+            return f[i].dateSortie;
+    }
+}
 // -------------------------------supprision du films--------------------------------------
 
 void supprimerProjectionsDansFilm(Film *films, unsigned int *nb_films, unsigned int projectionId)

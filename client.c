@@ -84,27 +84,42 @@ void supprimerReservationsLieesAProjectionPourTousLesClients(Client *clients, un
     }
 }
 
-void supprimerReservationFromClient(Client c, unsigned int reservationId)
+void supprimerReservationFromClient(Client *c, unsigned int reservationId)
 {
     int i, j;
-    for (i = 0; i < c.nombreReservation; i++)
+    for (i = 0; i < c->nombreReservation; i++)
     {
-        if (c.reservation[i].reservationId == reservationId)
+        if (c->reservation[i].reservationId == reservationId)
         {
-            for (j = i; j < c.nombreReservation - 1; j++)
+            for (j = i; j < c->nombreReservation - 1; j++)
             {
-                c.reservation[j] = c.reservation[j + 1];
+                c->reservation[j] = c->reservation[j + 1];
             }
+            --(c->nombreReservation);
             break;
         }
     }
 }
 
+void supprimerReservationFromClientNonpayer(Client *c){
+    int i, j;
+    for (i = 0; i < c->nombreReservation; i++)
+    {
+        if (strcmp(c->reservation[i].statuePaiment,"nonPayer") == 0)
+        {
+            for (j = i; j < c->nombreReservation - 1; j++)
+            {
+                c->reservation[j] = c->reservation[j + 1];
+            }
+            --(c->nombreReservation);
+        }
+    }
+}
 void setStatuePayementInClient(Client c,unsigned int idReservation){
     int i;
     for(i = 0; i < c.nombreReservation; i++){
         if(c.reservation[i].reservationId == idReservation){
-            strcpy(c.reservation[i].statuePaiment,"paye");
+            c.reservation[i].statuePaiment  = "paye";
             break;
         }
     }
@@ -189,7 +204,7 @@ void afficherReservationClientNonPayer(Client c)
     int i;
     for (i = 0; i < c.nombreReservation; i++)
     {
-        if (c.reservation[i].statuePaiment == "nonPayer")
+        if (strcmp(c.reservation[i].statuePaiment,"nonPayer")==0)
         {
             afficherReservation(c.reservation[i]);
             printf("\n");

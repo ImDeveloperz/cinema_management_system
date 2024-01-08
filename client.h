@@ -41,7 +41,8 @@ int rechercheClientParCin(Client *clients, unsigned numClients, char *cin);
 
 void supprimerReservationsLieesAProjectionPourTousLesClients(Client *clients, unsigned int nb_clients, unsigned int projectionId);
 
-void supprimerReservationFromClient(Client c,unsigned int reservationId);
+void supprimerReservationFromClient(Client *c,unsigned int reservationId);
+void supprimerReservationFromClientNonpayer(Client *c);
 // ----------------AffichageClient-------------------------------
 
 void afficherClient(Client client);

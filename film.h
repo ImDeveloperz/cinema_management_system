@@ -43,7 +43,7 @@ void ajouterFilmDansLaTableDesFilms(Film *tabFilms, int * tailleTabFilms, Film f
 Film *chercherFilmParId(Film *films, unsigned int numFilms, unsigned int filmId);
 Film *chercherFilmParTitle(Film *films, unsigned int numFilms, char *title);
 int estFilmExist(Film *f, int nb, int id);
-
+Date getDateFilm(Film *f, int nb, int id);
 // ------------------------------suppression des films ----------------------------
 
 void supprimerProjectionsDansFilm(Film *films, unsigned int *nb_films, unsigned int projectionId);
